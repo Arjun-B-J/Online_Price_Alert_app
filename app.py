@@ -1,18 +1,19 @@
-""" from models.item import Item
+from flask import Flask, render_template,request
+from models.item import Item
+import json
 
-url = "https://www.johnlewis.com/house-by-john-lewis-bonn-upholstered-bed-frame-double-saga-grey/p3711105"
-tag_name = "p"
-query = {"class":"price price--large"}
+app = Flask(__name__)
 
- got_thing = Item(url,tag_name,query)
-got_thing.save_to_mongo()
- 
-items_loaded = Item.all()
+@app.route('/',methods=['GET','POST'])
+def new_item():
+    if request.method =='POST':
+        url = request.form['url']
+        tag_name = request.form['tag_name']
+        query = json.loads(request.form['query'])
 
-print(items_loaded[0].load_price())
- """
+        Item(url,tag_name,query).save_to_mongo()
 
-from models.alert import Alert
+    return render_template('new_item.html')
 
-alert = Alert("1f3fde0b990a4641a304c09535abb1c0",2000)
-alert.save_to_mongo()
+if __name__=='__main__':
+    app.run(debug=True)
