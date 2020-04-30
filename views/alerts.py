@@ -20,8 +20,8 @@ def new_alert():
         item = Item(item_url,store.tag_name,store.query)
         item.load_price()
         item.save_to_mongo()
-        
-        Alert(alert_name,item._id,price_limit).save_to_mongo()
+        item_id = item._id
+        Alert(alert_name,item_id,price_limit).save_to_mongo()
 
     return render_template('alerts/new_alert.html')
 

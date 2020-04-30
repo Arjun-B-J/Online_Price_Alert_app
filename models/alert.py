@@ -5,15 +5,14 @@ from models.model import Model
 from dataclasses import dataclass,field
 
 
-@dataclass(eq=False)
+
 class Alert(Model):
-    collection: str= field(init=False,default ="alerts")
-    name: str
-    item_id : str
-    price_limit:float
-    _id:str = field(default_factory=lambda: uuid.uuid4().hex)
-    
-    def __post_init__(self): 
+    collection="alerts"
+    def __init__(self,name,item_id,price_limit,_id=None):
+        self.name=name
+        self.item_id=item_id
+        self.price_limit=price_limit
+        self._id = _id or uuid.uuid4().hex
         self.item = Item.get_by_id(item_id)
     
     def json(self) ->Dict:
