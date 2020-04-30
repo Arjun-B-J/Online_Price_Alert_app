@@ -4,18 +4,16 @@ import re
 from typing import Dict
 import uuid
 from models.model import Model
-class Item(Model):
-    collection = "Items"
-    def __init__(self,url:str ,tag_name: str,query: Dict,_id: str =None):
-        super().__init__()
-        self.url = url
-        self.tag_name = tag_name
-        self.query = query
-        self.price = None
-        self._id = _id or uuid.uuid4().hex
+from dataclasses import dataclass,field
 
-    def __repr__(self):
-        return f"<Item {self.url}>"
+@dataclass
+class Item(Model):
+    collection: str = field(init=False,default="Items")
+    url:str
+    tag_name: str
+    query:Dict
+    price:float = field(default=0)
+    _id:str = field(default_factory=lambda: uuid.uuid4().hex)
 
     def load_price(self):
         reponse = requests.get(self.url)
@@ -24,7 +22,7 @@ class Item(Model):
         element = soup.find(self.tag_name,self.query)
         price = element.text.strip()
 
-        #using regular expression to match patter
+        #using regular expression to match pattern
         pattern = re.compile(r"(\d+,?\d*\.\d\d)")
         match = pattern.search(price)
         temp = match.group(1)
@@ -37,6 +35,7 @@ class Item(Model):
             "_id":self._id,
             "url":self.url,
             "tag_name":self.tag_name,
+            "price":self.price,
             "query":self.query
         }
 
